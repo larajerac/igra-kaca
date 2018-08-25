@@ -1,25 +1,32 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.util.LinkedList;
+
 import javax.swing.*;
 
 public class Igra implements Runnable, KeyListener{
 
     private final Mreza mreza;
     private final Izgled izgled;
-
-    private boolean running;
-
+   
+    private static boolean running = false;
+    
+   
     public Igra(Mreza mreza, Izgled izgled) {
         this.mreza = mreza;
         this.izgled = izgled;
-        this.running = true;
+        
+        Igra.running = true;
     }
-
+    
+    
+    
     @Override
     public void run() {
         while (running) {
             try {
-                Thread.sleep(Math.max(50, 200 - mreza.pridobiTocke() / 5 * 30));                     //DEFAULT_MOVE_INTERVAL
+                Thread.sleep(Math.max(50, 200 - mreza.pridobiTocke() / 5 * 30));                    
             } catch (InterruptedException e) {
                 break;
             }
@@ -27,13 +34,16 @@ public class Igra implements Runnable, KeyListener{
             if (mreza.naslRunda() == true) {
                 izgled.narisi();
             } else {
-                System.out.print(" tocke: " + mreza.pridobiTocke());
-                izgled.sporociloKonec();
+            	
+            	
+                izgled.sporociloKonec(); //ob koncu igre poklièemo pojavno okno
                 running = false;
+                
+               
             }
         }
     }
-
+    // smer spreminjamo ob kliku na pušèice
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
@@ -41,7 +51,7 @@ public class Igra implements Runnable, KeyListener{
             switch (keyCode) {
                 case KeyEvent.VK_UP :
                     mreza.spremeniSmer(Smer.gor);
-                    break;
+                    break; 
                 case KeyEvent.VK_RIGHT :
                     mreza.spremeniSmer(Smer.desno);
                     break;
@@ -51,15 +61,17 @@ public class Igra implements Runnable, KeyListener{
                 case KeyEvent.VK_LEFT :
                     mreza.spremeniSmer(Smer.levo);
                     break;
-                case KeyEvent.VK_SPACE :
+                case KeyEvent.VK_SPACE : //za ponovno igro kliknemo space
+                    
+                    Aplikacija aplikacija = new Aplikacija();
+                    aplikacija.run();
+                   
+              
                     break;
+                
             }
         }
-        // na novo  platno
+        
     }
-    @Override
-    public void keyReleased(KeyEvent e) {}
-    @Override
-    public void keyTyped(KeyEvent e) {}
-
-}
+   
+	
